@@ -1,0 +1,49 @@
+#Título: Previsão doenças da soja
+#Autor : Fernando Schmitt
+
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
+
+#carregando os dados a serem trabalhados
+dados = pd.read_csv('soybean.csv', sep = ',')
+dados.head()
+
+#criando as variaveis x e y
+X = dados.iloc[:, 0:35].values
+Y = dados.iloc[:, 35].values
+
+#transformando atributo em números
+encoder = LabelEncoder()
+for x in range (35):
+    X[:, x] = encoder.fit_transform(X[:,x])
+
+print(X)    
+
+#dividindo os dados em treino e teste
+X_treino,X_teste,y_treino,y_teste = train_test_split(X, y, test_size = 0.3, random_state = 0) 
+print(len(X_treino),len(y_treino),len(X_teste),len(y_teste))
+
+#criando o classificador floresta aleatoria
+f = RandomForestClassifier(n_estimators = 300)
+f.fit(X_treino, y_treino)
+
+
+#criando previsão
+p = f.predict(X_teste)
+p
+
+#matriz de confusao
+mz = confusion_matrix(y_teste, p)
+mz
+
+#taxa de acerto
+txa = accuracy_score(y_teste,p)
+txa
+
+#taxa de erro
+txe = 1 - txa
+txe
+
